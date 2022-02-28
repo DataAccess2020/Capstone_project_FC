@@ -1,38 +1,49 @@
 votes <- "https://api.propublica.org/congress/v1/117/senate/sessions/1/votes/"
 
-links1 <- as.data.frame(stri_paste(votes,1:5,".json"))
+links1 <- as.data.frame(stri_paste(votes,1:3,".json"))
 
 i <- 1
 for (i in 1:nrow(links1)){
   links1$key <- c(key)
 }
 
+result <- list()
+
 i <- 1
 for(i in 1:nrow(links1)){
-  result <- RCurl::getURL(links1$`stri_paste(votes, 1:5, ".json")`, 
-                                        httpheader = c(links1$key))
+  result <- as.list(RCurl::getURL(links1$`stri_paste(votes, 1:3, ".json")`, 
+                                        httpheader = c(links1$key)))
   Sys.sleep(1)
 }
 
-cat(result)
+##since there everything is ok, but after i think that i can't do anything
 
 votes_list <- list()
 
-i <- 1
+voting <- as.data.frame(stri_paste("vote",1:9))
 
-for (i in 1:5){
- votes_list <- append(votes_list, fromJSON(result[i]))
+i <- 1
+for (i in 1:length(result)){
+  votes_list <- c(votes_list, fromJSON(result[i, 1]))
 }
 
-c <- votes_list[[6]][[1]][[1]][[24]]
-d <- as.data.frame(rbind, c)
+?c
+
+i <- 1
+for (i in 1:3){
+  new_value <- c(fromJSON(result[[i]]))
+}
+
+votes_list <- 
+
 
 sen_list <- data.frame()
-index <- c(3, 6, 9, 12, 15)
+index <- seq(3,9, by = 3)
+index
 
 i <- 1
 x <- 1
-for(x in 1:4){
+for(x in 1:9){
   c <- votes_list[[index[x]]][[1]][[1]][[24]]
   for(i in 1:length(c)){
     dat <- data.frame(matrix(unlist(c[[i]]), nrow = length(c[[i]]), byrow = FALSE))
@@ -40,15 +51,24 @@ for(x in 1:4){
 }
 }
 
+c
+
+i <- 1
+x <- 3
+for(x in index){
+  c <- votes_list[[x]][[1]][[1]][[24]]
+  for(i in 1:length(c)){
+    dat <- as.list(matrix(unlist(c[[i]]), nrow = length(c[[i]]), byrow = FALSE))
+    sen_list <- as.data.frame(do.call(rbind, t(dat)))
+  }
+}
 
 
 
 
 
-
-
-
-
+c <- votes_list[[6]][[1]][[1]][[24]]
+d <- as.data.frame(rbind, c)
 c <- votes_list[[3]][[1]][[1]][[24]]
 
 
