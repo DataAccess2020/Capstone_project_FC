@@ -1,1 +1,3 @@
-# Capstone_project_FC
+![Logo](fig/dapscologo.jpg)
+# Capstone Project
+### Francesco Catalfamo
