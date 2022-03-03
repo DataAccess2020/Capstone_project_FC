@@ -49,3 +49,22 @@ for (i in 1:length(sen_vote)){
 }
 
 data_vote <- as.data.frame(do.call(rbind, all_vote))
+
+#extract questions text
+title_step2 <- list()
+
+i <- 1
+for (i in 1:20){
+  title_step1 <- votes_list[[i]][[3]][[1]][[1]][["question_text"]]
+  title_step2[[length(title_step2)+1]] <- title_step1
+}
+
+title_step4 <- list()
+
+i <- 1
+for (i in 1:length(title_step2)){
+  title_step3 <- c(title_step2[[i]])
+  title_step4[[length(title_step4)+1]] <- title_step3
+}
+
+data_title <- as.data.frame(do.call(rbind, title_step4))
