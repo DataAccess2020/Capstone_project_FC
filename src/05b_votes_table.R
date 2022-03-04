@@ -1,6 +1,6 @@
 votes <- "https://api.propublica.org/congress/v1/117/senate/sessions/1/votes/"
 
-links1 <- as.data.frame(stri_paste(votes,1:20,'.json'))
+links1 <- as.data.frame(stri_paste(votes,1:528,'.json'))
 
 i <- 1
 for (i in 1:nrow(links1)){
@@ -9,7 +9,7 @@ for (i in 1:nrow(links1)){
 
 i <- 1
 for(i in 1:nrow(links1)){
-  result <- as.data.frame(RCurl::getURL(links1$`stri_paste(votes, 1:20, ".json")`, 
+  result <- as.data.frame(RCurl::getURL(links1$`stri_paste(votes, 1:528, ".json")`, 
                                         httpheader = c(links1$key)))
   Sys.sleep(1)
 }
@@ -25,6 +25,8 @@ for (i in 1:20){
   vote_step <- fromJSON(result[[i,1]])
   votes_list[[length(votes_list)+1]] <- vote_step
 }
+
+sen_vote <- list()
 
 i <- 1
 for (i in 1:20){
