@@ -14,6 +14,8 @@ library(rvest)
 library(plotly)
 library(gapminder)
 library(htmlwidgets)
+library(XML)
+library(igraph)
 
 #URL
 
