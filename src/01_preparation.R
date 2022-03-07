@@ -16,6 +16,7 @@ library(gapminder)
 library(htmlwidgets)
 library(XML)
 library(igraph)
+library(xml2)
 
 #URL
 

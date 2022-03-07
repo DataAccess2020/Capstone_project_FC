@@ -1,8 +1,3 @@
-a <- read_xml("1 (1).xml")
-
-xml_find_all(a, ".//form/action/action-desc/cosponsor") %>%
-  xml_text()
-
 spon_list <- list()
 
 i <- 1
@@ -25,11 +20,8 @@ for (z in 1:3687){
   cosp_list[[length(cosp_list)+1]] <- cosp
 }
 
-
 spon_data <- as.data.frame(t(stri_list2matrix(spon_list)))
 
-cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)))
+cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)), byrow = FALSE)
 
-cosp_data$spon <- spon_data$V1
-cosp_data$spon2 <- spon_data$V2
 
