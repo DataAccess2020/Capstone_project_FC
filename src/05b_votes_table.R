@@ -48,6 +48,8 @@ for (i in 1:length(sen_vote)){
 
 data_vote <- as.data.frame(do.call(rbind, all_vote))
 
+data_vote <- data_vote[-c(1:198), ]
+
 #extract questions text
 title_step2 <- list()
 
