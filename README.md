@@ -9,9 +9,13 @@
 - Relationship while senators are making laws, using sponsorship and cosponsorship of each introduced law
 
 Jones. D. R., Party Polarization and Legislative Gridlock
+
 Burden B. C., Polarization, Obstruction, and Governing in the Senate
+
 Carson J. L., Electoral Accountability, Party Loyalty, and Roll-Call Voting in the U.S. Senate
+
 Treul S. A., Ambition and Party Loyalty in the US Senate
+
 #### Hypothesis
 | Leader | `Mitch McConnell` | Gop vote | value | `Chuck Schumer` | Dem vote | value |
 | :--- | :---: |  :---: |  :---: |  :---: |  :---: |  :---: | 
