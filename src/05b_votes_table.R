@@ -14,22 +14,18 @@ for(i in 1:nrow(links1)){
   Sys.sleep(1)
 }
 
-varnames <- ("api")
-
-names(result)[1:ncol(result)]<- paste0(rep(varnames, each=1), "_",1)
-
 votes_list <- list()
 
 i <- 1
-for (i in 1:20){
-  vote_step <- fromJSON(result[[i,1]])
+for (i in 1:528){
+  vote_step <- fromJSON(result[[i]])
   votes_list[[length(votes_list)+1]] <- vote_step
 }
 
 sen_vote <- list()
 
 i <- 1
-for (i in 1:20){
+for (i in 1:528){
   vote2 <- votes_list[[i]][[3]][[1]][[1]][["positions"]]
   sen_vote[[length(sen_vote)+1]] <- vote2
 }
@@ -56,7 +52,7 @@ data_vote <- as.data.frame(do.call(rbind, all_vote))
 title_step2 <- list()
 
 i <- 1
-for (i in 1:20){
+for (i in 1:528){
   title_step1 <- votes_list[[i]][[3]][[1]][[1]][["question_text"]]
   title_step2[[length(title_step2)+1]] <- title_step1
 }
@@ -70,3 +66,28 @@ for (i in 1:length(title_step2)){
 }
 
 data_title <- as.data.frame(do.call(rbind, title_step4))
+
+#extract date
+date_step2 <- list()
+
+i <- 1
+for (i in 1:528){
+  date_step1 <- votes_list[[i]][[3]][[1]][[1]][["date"]]
+  date_step2[[length(date_step2)+1]] <- date_step1
+}
+
+date_step4 <- list()
+
+i <- 1
+for (i in 1:length(date_step2)){
+  date_step3 <- c(date_step2[[i]])
+  date_step4[[length(date_step4)+1]] <- date_step3
+}
+
+data_date <- as.data.frame(do.call(rbind, date_step4))
+
+data_title$date <- data_date
+
+data_title <- data_title[-c(1:2), ]
+
+data1 <- rbind(data_title, data_title)

@@ -8,6 +8,12 @@ library(RCurl)
 library(RJSONIO)
 library(rromeo)
 library(stringi)
+library(rio)
+library(lubridate)
+library(rvest)
+library(plotly)
+library(gapminder)
+library(htmlwidgets)
 
 #URL
 

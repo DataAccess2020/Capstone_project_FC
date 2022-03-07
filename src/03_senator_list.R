@@ -9,4 +9,6 @@ list3 <- list2[[5]]
 
 sen_list <- as.data.frame(do.call(rbind, list3))
 
+sen_list <- sen_list[-c(36,54), ]
+
 sen_list
