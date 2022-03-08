@@ -24,4 +24,15 @@ spon_data <- as.data.frame(t(stri_list2matrix(spon_list)))
 
 cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)), byrow = FALSE)
 
+setwd("C:/Users/fcata/OneDrive/Desktop/Capstone_project_FC/data/")
+
+write.csv(spon_data, "spon_data.csv")
+write.csv(cosp_data, "cosp_data.csv")
+
+spon_data <- import("spon_data.csv")
+cosp_data <- import("cosp_data.csv")
+
+spon_data <- subset(spon_data, select = -c(V1))
+cosp_data <- subset(cosp_data, select = -c(V1))
+
 
