@@ -22,7 +22,7 @@ for (z in 1:3687){
 
 spon_data <- as.data.frame(t(stri_list2matrix(spon_list)))
 
-cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)), byrow = FALSE)
+cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)))
 
 setwd("C:/Users/fcata/OneDrive/Desktop/Capstone_project_FC/data/")
 
