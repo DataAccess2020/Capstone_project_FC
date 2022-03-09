@@ -11,6 +11,4 @@ network <- simpleNetwork(count, height="100px", width="100px",
                    zoom = T                   
 )
 
-
-
-
+saveWidget(network, file = "network.html")
