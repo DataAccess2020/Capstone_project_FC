@@ -3,21 +3,16 @@
 ### Francesco Catalfamo
 
 # US Senate: loyalty and relationship through the first session of the 117th Congress
+Thanks to its federal composition, the US Senate has always been a central place where the legislation must be done. At the same time, ever thanks to its federal composition, political analyst and commentator said that *the system is broken* because it will be difficult for Democrats to be the majority in the next few years.
+
+Because of these prerequisites, the analysis will be on the US Senate, especially on the relationship between each US Senator and their Party Leader to observe the loyalty of them during each vote that occurred during the first session of the 117th Congress but also to analyze the connection between every member of the US upper chamber while they are making laws. 
 
 #### Research questions
-- Loyalty in th US Senate by calculating the differences mean of the votes of party leaders and the vote of each senators
-- Relationship while senators are making laws, using sponsorship and cosponsorship of each introduced law
+This analysis will be based on two different research question: 
 
-Jones. D. R., Party Polarization and Legislative Gridlock
+- Analysis of the loyalty of each US Senator using the value in the table below to calculate the loyalty value for each Senator respect to their party leader, in relationship with the year of first election
 
-Burden B. C., Polarization, Obstruction, and Governing in the Senate
-
-Carson J. L., Electoral Accountability, Party Loyalty, and Roll-Call Voting in the U.S. Senate
-
-Treul S. A., Ambition and Party Loyalty in the US Senate
-
-#### Hypothesis
-| Leader | `Mitch McConnell` | Gop vote | value | `Chuck Schumer` | Dem vote | value |
+| Leader | `Mitch McConnell` | GOP vote | value | `Chuck Schumer` | DEM vote | value |
 | :--- | :---: |  :---: |  :---: |  :---: |  :---: |  :---: | 
 | Yes | `Yes` | Yes | 0.5 | `Yes` | Yes | 1.5 |
 | Yes | `Yes` | No | 0 | `Yes` | No | 2 | 
@@ -28,8 +23,23 @@ Treul S. A., Ambition and Party Loyalty in the US Senate
 | Not vote | `Not vote` | Yes | 1 | `Not vote` | Yes | 1 |
 | Not vote | `Not vote` | No |0.25 | `Not vote` | No | 1.75 |
 | Not vote | `Not vote` | Not vote | 0.5 | `Not vote` | Not vote | 1.5 |
+
+- Network analysis of the relationship between Senators in the introduced bills, using sponsorship and cosponsorship they had proposed last year
+
+#### Hypothesis and expected results
+In the first research question the main hypothesis is that the *Democratic* and *Independent* member (that caucused with them) will have about a similar value, thanks to the fact that they have the majority, while the *Republican* could have a more distributed value, thanks to the fact that Democrats sometimes try to include them to make bipartisan laws or to overpass super-majority if it is required. Thanks to the use of the year of the first election, the main objective is to observe if senior member of the upper chamber of the US Congress use to vote more like the their leader while junior member tend to vote differently.
+
+In the second research question the main objective is to inspect the polarization that occurs in the US by observe if Senator made laws just with their party's member or if they use to do also with the other one. In the graph, it is expected to see that the majority of the member of the two parties made laws just with their same party while there is a few Senator that use to make, or almost try, to pass legislation with bipartisan support. 
+
 #### Dataset
 
-#### Analysis and expected results
+#### Analysis
 
 #### References
+- Jones. D. R., Party Polarization and Legislative Gridlock
+
+- Burden B. C., Polarization, Obstruction, and Governing in the Senate
+
+- Carson J. L., Electoral Accountability, Party Loyalty, and Roll-Call Voting in the U.S. Senate
+
+ -Treul S. A., Ambition and Party Loyalty in the US Senate
