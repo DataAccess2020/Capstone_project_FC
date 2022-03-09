@@ -26,13 +26,34 @@ cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)))
 
 setwd("C:/Users/fcata/OneDrive/Desktop/Capstone_project_FC/data/")
 
+number <- (1:3687)
+
+cosp_data$number <- number
+spon_data$number <- number
+
+spon_data <- subset(spon_data, select = -c(V1))
+cosp_data <- subset(cosp_data, select = -c(V1))
+
 write.csv(spon_data, "spon_data.csv")
 write.csv(cosp_data, "cosp_data.csv")
 
 spon_data <- import("spon_data.csv")
 cosp_data <- import("cosp_data.csv")
 
-spon_data <- subset(spon_data, select = -c(V1))
-cosp_data <- subset(cosp_data, select = -c(V1))
+cosp_data$sponsor <- spon_data$V1
 
+att <- cosp_data %>%
+  select_if(is.character) %>%
+  pivot_longer(!sponsor, names_to = "name", values_to = "cosponsor")
 
+count <- att %>% 
+  group_by(sponsor, cosponsor)  %>%
+  summarize(n = n())
+
+count <- count %>% 
+  filter(!is.na(cosponsor)&!is.na(sponsor))
+
+count$sponsor <- str_replace(count$sponsor, "M[rs][s]*\\.[\\s]*", "")
+count$cosponsor <- str_replace(count$cosponsor, "M[rs][s]*\\.[\\s]*", "")
+
+write.csv(count, "count.csv")
