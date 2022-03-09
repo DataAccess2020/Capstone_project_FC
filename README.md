@@ -32,14 +32,26 @@ In the first research question the main hypothesis is that the *Democratic* and 
 In the second research question the main objective is to inspect the polarization that occurs in the US by observe if Senator made laws just with their party's member or if they use to do also with the other one. In the graph, it is expected to see that the majority of the member of the two parties made laws just with their same party while there is a few Senator that use to make, or almost try, to pass legislation with bipartisan support. 
 
 #### Dataset
+The used data will be taken from:
+- Regard of the first research question, I will  use the API from `ProPublica` from which I will extract the 528 votes held during the first session of the 117th Congress in a `json` list
+
+- Regard the second research question, I will use `govinfo` to download a zip folder that contains 3687 `xml` with the text of each proposed bill form which I will take the complete list of sponsor and cosponsor of all the laws
 
 #### Analysis
 
+
+#### Directory structure
+| Directory | Functionality |
+| :---: | :--- | 
+| `src` | All the useful scripts |
+| `fig` | Graph and figures |
+| `old` | Old and useless scripts |
+| `doc` | Eventual documentation |
+| `output` | The final work |
+| `data` | A private directory for dataframe downloaded |
+
 #### References
 - Jones. D. R., Party Polarization and Legislative Gridlock
-
 - Burden B. C., Polarization, Obstruction, and Governing in the Senate
-
 - Carson J. L., Electoral Accountability, Party Loyalty, and Roll-Call Voting in the U.S. Senate
-
- -Treul S. A., Ambition and Party Loyalty in the US Senate
+- Treul S. A., Ambition and Party Loyalty in the US Senate
