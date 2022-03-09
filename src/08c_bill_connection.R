@@ -55,5 +55,16 @@ count <- count %>%
 
 count$sponsor <- str_replace(count$sponsor, "M[rs][s]*\\.[\\s]*", "")
 count$cosponsor <- str_replace(count$cosponsor, "M[rs][s]*\\.[\\s]*", "")
+count$sponsor <- str_replace(count$sponsor, "Wyden[\\s]*", "Wyden")
+count$cosponsor <- str_replace(count$cosponsor, "Wyden[\\s]*", "Wyden")
+count$sponsor <- str_replace(count$sponsor, "Ernst[\\s]*", "Ernst")
+count$cosponsor <- str_replace(count$cosponsor, "Ernst[\\s]*", "Ernst")
+count[count == "Van [s]Hollen"] <- "Van Hollen"
+
+count <- count %>%
+  relocate(cosponsor)
 
 write.csv(count, "count.csv")
+
+count <- import("count.csv")
+count <- subset(count, select = -c(V1))

@@ -7,8 +7,10 @@ list1 <- fromJSON(list_sen)
 list2 <- list1[[3]][[1]]
 list3 <- list2[[5]]
 
-sen_list <- as.data.frame(do.call(rbind, list3))
+sen_list <- as.data.frame(as.character(do.call(rbind, list3)))
 
 sen_list <- sen_list[-c(36,54), ]
 
 sen_list
+
+write.csv(sen_list, "sen_list.csv")
