@@ -31,14 +31,11 @@ In the first research question the main hypothesis is that the *Democratic* and 
 
 In the second research question the main objective is to inspect the polarization that occurs in the US by observe if Senator made laws just with their party's member or if they use to do also with the other one. In the graph, it is expected to see that the majority of the member of the two parties made laws just with their same party while there is a few Senator that use to make, or almost try, to pass legislation with bipartisan support. 
 
-#### Dataset
+#### Dataset and analysis
 The used data will be taken from:
-- Regard of the first research question, I will  use the API from `ProPublica` from which I will extract the 528 votes held during the first session of the 117th Congress in a `json` list
+- Regard of the first research question, I will  use the API from `ProPublica` from which I will extract the 528 votes held during the first session of the 117th Congress in a `json` list. I will use to vote cast by all the Senator regarding to the vote cast by each Party Leader, and with the obtained value I will construct a graph in which i will observe if the senior Senators were more loyal to the Leader.
 
-- Regard the second research question, I will use `govinfo` to download a zip folder that contains 3687 `xml` with the text of each proposed bill form which I will take the complete list of sponsor and cosponsor of all the laws
-
-#### Analysis
-
+- Regard the second research question, I will use `govinfo` to download a zip folder that contains 3687 `xml` with the text of each proposed bill form which I will take the complete list of sponsor and cosponsor of all the laws. From the extracted information, I will build a network analysis codifying and coloring differently who was the sponsor and who is the cosponsor.
 
 #### Directory structure
 | Directory | Functionality |
@@ -51,7 +48,7 @@ The used data will be taken from:
 | `data` | A private directory for dataframe downloaded |
 
 #### References
-- Jones. D. R., Party Polarization and Legislative Gridlock
-- Burden B. C., Polarization, Obstruction, and Governing in the Senate
-- Carson J. L., Electoral Accountability, Party Loyalty, and Roll-Call Voting in the U.S. Senate
-- Treul S. A., Ambition and Party Loyalty in the US Senate
+- Jones. D. R., (2001) Party Polarization and Legislative Gridlock, Political Research Quarterly, University of Utah
+- Burden B. C., (2011) Polarization, Obstruction, and Governing in the Senate, The Forum, University of Wisconsin - Madison
+- Carson J. L., (2008) Electoral Accountability, Party Loyalty, and Roll-Call Voting in the U.S. Senate, Chicago Scholarship, Oxford University Press
+- Treul S. A., (2007) Ambition and Party Loyalty in the US Senate, Midwest Political Science Association, University of Minnesota
