@@ -79,13 +79,11 @@ l <- layout_with_fr(network)
 
 co <- layout.auto(network)
 
-png(filename = here("fig/Network10.png"), width = 1980, height = 1080)
+png(filename = here("fig/Network10.png"), width = 3960, height = 2160)
 
 plot(network,
-  vertex.size = 2,
   frame = F,
   layout = l,
-  vertex.size = V(network)$size,
   vertex.label.cex = 0.7,
   vertex.color = adjustcolor(V(network)$color, alpha.f = 0.9),
   vertex.label.color = 'black',
