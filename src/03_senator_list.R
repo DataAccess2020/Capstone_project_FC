@@ -14,4 +14,3 @@ sen_list <- sen_list[-c(36,54), ]
 sen_list
 
 write.csv(sen_list, "sen_list.csv")
-
