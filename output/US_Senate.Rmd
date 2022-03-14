@@ -11,7 +11,7 @@ In this project I will analyze the US Senate through two research questions:
 - In the second question, I will start from what is now considered as a general opinion about US politics: it is polarized, and the Senate is the place where it is more evident. Starting from this statement, I will use each introduced bill in the first session of the 117^th^ Congress, the one that goes through 2021, and I will observe who are the sponsors and who are their cosponsors. Then I will reorganize the data obtained in a data frame to count the number of connections between them. To show the results of the analysis, I will create a network analysis through what observe the connection between the two parties. 
 
 In my research I will need a these of packages: 
-```{r Package loading, eval = FALSE}
+```{r Package loading, include=FALSE}
 library(tidyverse)
 library(jsonlite)
 library(RCurl)
@@ -21,6 +21,7 @@ library(plotly)
 library(htmlwidgets)
 library(igraph)
 library(xml2)
+library(here)
 ```
 
 ## DATA EXTRACTION
@@ -128,7 +129,7 @@ Once I obtain the data frame with all the positions I have to define the value o
 3.	The party of each senator, by adding the column in the sen_list data frame as a character
 4.	The year of the first election, add as a vector
 
-As can be seen in the following table, Using these four elements, I will show in a following graph how strong is the loyalty of each senator to his or her leader with a dot plot. 
+As can be seen in the following table, Using these four elements, I will show in the following graph how strong is the loyalty of each senator to his or her leader with a dot plot. 
 
 ```{r, eval=FALSE}
 #Mitch McConnell
@@ -198,21 +199,31 @@ colnames(mean)[colnames(mean) == "merged"] = "loyalty"
 ```
 
 ## Loyalty plot
+The plot of the loyalty will be a simple dot plot: it will be based on the value obtained in the previous data frame and will show the differences in the mean of each senator concerning the value of the leader. On the x-axis, I will place the variable *assumed_office* that goes from 1975 to 2021 without any regularity. On the other hand, the y-axis is the variable *loyalty* and it is contained in a range between 0 and 2 and depends on the mean previously calculated. The dots in the plot are different, just for two main reasons: 
 
+1.	 The different shape indicates the position in the US Senate. In fact Leader, Whip, and Conference Chair are the three main figures that lead the party caucus
+2.	The different size is needed just because of better visualization of the graph
 
-```{r, eval=FALSE}
-ggplot(mean, aes(x = office, y = loyalty, color = party, label = name)) +
-  geom_point() +
+Thanks to these simple accouterments, the graph shows the distribution of the senators with respect to the party leaders that they elect at the beginning of each Congress. While in the Republican party each senator seems to vote quite differently with respect to the leaders, the Democrats seem to be more united, and this could be explained with the political division of the Senate that make the Democrats in the position of searching votes inside the opposition to pass a large part of their legislation. 
+
+```{r include=FALSE}
+setwd("C:/Users/fcata/OneDrive/Desktop/Capstone_project_FC/")
+mean <- import("data/mean.csv")
+```
+```{r echo=TRUE}
+p <- ggplot(mean, aes(x = office, y = loyalty, color = party, label = name)) +
+  geom_point(aes(shape = role, size = role_v)) +
   scale_color_manual(values = c("blue", "green", "red")) +
   scale_y_discrete()
+
+ggplotly(p)
 ```
-![Loyalty plot](C:\Users\fcata\OneDrive\Desktop\Capstone_project_FC\fig\Rplot07.png)
 
 ## DATA ANALYSIS - SECOND QUESTION
 From the XML files downloaded, I obtain two data frames: 
 
 1.	The first one contains the full list of the sponsors of each introduced bill, which contains the full list of the 3687 sponsors of all the introduced bills
-2.	The second one contains the full list of the cosponsors of each introduced bill, that have almost 59 columns for each cosponsor with a lot of Naif there is less than 59 cosponsors
+2.	The second one contains the full list of the cosponsors of each introduced bill, that have almost 59 columns for each cosponsor with a lot of NA if there are less than 59 cosponsors
 
 Using these two data frames the main objective is to create a new table in which I will have three columns: one for the sponsors, one for their cosponsors, and one with the number of relationships they had during all the first session of this Congress. To complete this task, I first need to use **select_if** and **pivot_longer** to create the data frame in which I have each sponsor related to its cosponsor and to the number of bills. Then, I have to use **group_by** and **summarize** to reduce the number of connections and create a new variable that shows the number of connections between sponsor and cosponsor. Observing this data frame I see a lot of missing values and errors, so I need to remove them by using **filter** with **!is.na** while I fix the error in the data using **str_replace** deleting the presence of multiple spaces and the title of each senator (Mr., Ms., and Mrs.). To the obtained data frame I just need to modify the order of the columns, placing the list of cosponsors in the first place using **relocate** because they are the starting point of the following of the network analysis.
 Starting from this data frame I have the possibility to create a network analysis over the connection to research the possible polarization of the US upper chamber of Congress. The following work over the data frame will be useful to the construction of the network analysis. 
@@ -227,7 +238,7 @@ Starting from this data frame I have the possibility to create a network analysi
 ```{r, eval=FALSE}
 
 ```
-![Social Network Analysis](C:\Users\fcata\OneDrive\Desktop\Capstone_project_FC\fig\last-attempt.png)
+![Social Network Analysis](C:\Users\fcata\OneDrive\Desktop\Capstone_project_FC\fig\Rplot.png)
 
 
 ```{r}
