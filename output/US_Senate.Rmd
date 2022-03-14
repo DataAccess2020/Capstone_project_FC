@@ -5,27 +5,233 @@ author: "Francesco Catalfamo"
 date: '2022-03-21'
 output: html_document
 ---
+## INTRODUCTION
+In this project I will analyze the US Senate through two research questions:
+- In the first question, I research the possible connection between the seniority of the members of the upper chamber of the Congress and their position with respect to their Party Leader. I will use each cast vote and recode these looking at the vote expressed by their Leader, starting from considering the equal political division of the US Senate with just the Vice president casting the tie-breaking vote. For this reason, I want to observe if the seniority could influence how senators cast their vote, considering that they will vote used to vote quite more similar to their leader, while the juniors will vote more differently. 
+- In the second question, I will start from what is now considered as a general opinion about US politics: it is polarized, and the Senate is the place where it is more evident. Starting from this statement, I will use each introduced bill in the first session of the 117^th^ Congress, the one that goes through 2021, and I will observe who are the sponsors and who are their cosponsors. Then I will reorganize the data obtained in a data frame to count the number of connections between them. To show the results of the analysis, I will create a network analysis through what observe the connection between the two parties. 
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+In my research I will need a these of packages: 
+```{r Package loading, eval = FALSE}
+library(tidyverse)
+library(jsonlite)
+library(RCurl)
+library(stringi)
+library(rio)
+library(plotly)
+library(htmlwidgets)
+library(igraph)
+library(xml2)
 ```
 
-## R Markdown
+## DATA EXTRACTION
+To research the data needed for the first question, I will use the API from the website ProPublica that takes its information directly from the pages of the two chambers of Congress. I will use the API to extract two pieces of information:
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+The complete list of Senators from the 117^th^ Congress,
+```{r eval=FALSE}
+list_sen <- RCurl::getURL(senator, 
+                          httpheader = c(key))
+cat(list_sen)
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+list1 <- fromJSON(list_sen)
 
-```{r, message = F, fig.align = 'center', fig.width = 8, fig.height = 6}
-![plot](C:\Users\fcata\OneDrive\Desktop\Capstone_project_FC\fig\plot.html)
+list2 <- list1[[3]][[1]]
+list3 <- list2[[5]]
+
+sen_list <- as.data.frame(do.call(rbind, list3))
 ```
 
-## Including Plots
+The complete list of the votes cast by each senator during this Congress
+```{r eval=FALSE}
+i <- 1
+for(i in 1:nrow(links1)){
+  result <- as.data.frame(RCurl::getURL(links1$`stri_paste(votes, 1:528, ".json")`, 
+                                        httpheader = c(links1$key)))
+  Sys.sleep(1)
+}
 
-You can also embed plots, for example:
+votes_list <- list()
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+i <- 1
+for (i in 1:528){
+  vote_step <- fromJSON(result[[i]])
+  votes_list[[length(votes_list)+1]] <- vote_step
+}
+
+sen_vote <- list()
+
+i <- 1
+for (i in 1:528){
+  vote2 <- votes_list[[i]][[3]][[1]][[1]][["positions"]]
+  sen_vote[[length(sen_vote)+1]] <- vote2
+}
+
+off_vote <- list()
+
+i <- 1
+for (i in 1:length(sen_vote)){
+  list_step <- c(sen_vote[[i]])
+  off_vote[[length(off_vote)+1]] <- list_step
+}
+
+all_vote <- list()
+
+i <- 1
+for (i in 1:length(sen_vote)){
+  off_step <- as.data.frame(do.call(rbind, sen_vote[[i]]))
+  all_vote[[length(all_vote)+1]] <- off_step
+}
+
+data_vote <- as.data.frame(do.call(rbind, all_vote))
+```
+
+To do these things, I will use a for loop that will extract and add each of the 528 votes held last year to a data frame, just with two elements: my personal API key and the link of the API request (*https://api.propublica.org/congress/v1/117/senate/members.json* and *https://api.propublica.org/congress/v1/117/senate/sessions/1/votes/*) previously modified with all the numbers of roll call votes. I will use the function **getURL** from the package **RCurl**, and then, I will use the function **fromJSON** to work on the obtained file and to put all the elements collected from the API requests into a big list in which I will find and extract all the votes cast. After gaining a large list with all the elements needed, I will use **rbind** and **do.call** to transform all the elements of the list into a data frame.
+
+To request the information of the second research question, due to a technical problem with the API of Pro Publica, I switch sources and downloaded a folder directly from **YouGov** that contains 3687 XML with the text of all the introduced bills. With all these files in a folder on my computer, I just need to scrape the information, and to do the extraction I will use for loop with **read_xml** using the name of the files in the folder, create with **str_c** in the same loop, and then **xml_find_all** to extract the specified nodes that I need. In order to gather the full list of sponsors and cosponsors, I will use these functions two times, one to scrape the first list that contains one element for each bill and one to scrape the second list that has a different length for each bill, depending on the number of senators who have decided to sign the bill. As in the previous question, it will render me two lists with a lot of elements that I will reorganize into two data frames different using **stri_list2matrix** and **as.data.frame** adding them the number of the laws that will be useful in the following step. 
+
+```{r, eval=FALSE}
+spon_list <- list()
+
+i <- 1
+for (i in 1:3687){
+  path <- str_c("1 (", i, ").xml")
+  a <- read_xml(path)
+  cosp <- c(xml_find_all(a, ".//form/action/action-desc/sponsor") %>%
+    xml_text())
+  spon_list[[length(spon_list)+1]] <- cosp
+}
+
+cosp_list <- list()
+
+z <- 1
+for (z in 1:3687){
+  path <- str_c("1 (", z, ").xml")
+  a <- read_xml(path)
+  cosp <- c(xml_find_all(a, ".//form/action/action-desc/cosponsor") %>%
+              xml_text())
+  cosp_list[[length(cosp_list)+1]] <- cosp
+}
+
+spon_data <- as.data.frame(t(stri_list2matrix(spon_list)))
+cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)))
+
+number <- (1:3687)
+
+cosp_data$number <- number
+spon_data$number <- number
+```
+
+## DATA ANALYSIS - FIRST QUESTION
+Once I obtain the data frame with all the positions I have to define the value of the vote cast by each senator with respect to his or her party Leader. Considering the party division in the Senate, I built a table in which I consider all the possible positions of the senators (vote yeas, note no, and not vote) related to the position of the Party Leader. To create a useful data frame with the values, I have to construct three new data frames, one for the Republicans, one for the Democrats, and one for the Independents, using **filter** with the name of the leader and **merge** with the data frame that contains all the votes cast. In these two I will compare the vote of *Mitch McConnell* and *Chuck Schumer* just by using **ifelse** crossing the value previously defined with the column of the data frame that contains all the votes in order to create a vector with all the values for on hundred senators. These three vectors have to be inserted in the previous data frames as three new columns that I will merge by using **is.na** because one column is composed just of the votes of the Republicans and *NA* if the senator came from the other parties, one by the votes of Democrats, and one for the votes cast by the Independents, while all the missing values are composed by *NA*. A final point, starting from this new column merged, I created a new data frame by using **summarize_at**, **group_by**, and **mean**  and that new one will include:
+
+1.	The last name of each senator, taken from the previous data frame as a character
+2.	The related mean of the value, created in the previous data frame, grouping, summarizing, and making the mean of the previously recoded value of the vote
+3.	The party of each senator, by adding the column in the sen_list data frame as a character
+4.	The year of the first election, add as a vector
+
+As can be seen in the following table, Using these four elements, I will show in a following graph how strong is the loyalty of each senator to his or her leader with a dot plot. 
+
+```{r, eval=FALSE}
+#Mitch McConnell
+leaderR <- data_vote %>%
+  filter(name == "Mitch McConnell")
+
+date <- rep(c(1:526), each = 1)
+leaderR$date <- date
+
+offR = merge(data_vote, leaderR, by = "date")
+
+#Chuck Schumer
+leaderD <- data_vote %>%
+  filter(name == "Charles E. Schumer")
+
+date <- rep(c(1:526), each = 1)
+leaderD$date <- date
+
+offD = merge(data_vote, leaderD, by = "date")
+
+#merge
+mean_r <- ifelse(offR$vote_position.y == "Yes" & offR$vote_position.x == "Yes" & offR$party.x == "R", 0.5,
+                     ifelse(offR$vote_position.y == "Yes" & offR$vote_position.x == "No" & offR$party.x == "R", 0,
+                            ifelse(offR$vote_position.y == "Yes" & offR$vote_position.x == "Not Voting" & offR$party.x == "R", 0.25,
+                                   ifelse(offR$vote_position.y == "No" & offR$vote_position.x == "Yes" & offR$party.x == "R", 1.5,
+                                          ifelse(offR$vote_position.y == "No" & offR$vote_position.x == "No" & offR$party.x == "R", 0.5,
+                                                 ifelse(offR$vote_position.y == "No" & offR$vote_position.x == "Not Voting" & offR$party.x == "R", 1,
+                                                        ifelse(offR$vote_position.y == "Not Voting" & offR$vote_position.x == "Yes" & offR$party.x == "R", 1,
+                                                               ifelse(offR$vote_position.y == "Not Voting" & offR$vote_position.x == "No" & offR$party.x == "R", 0.25, 
+                                                                      ifelse(offR$vote_position.y == "Not Voting" & offR$vote_position.x == "Not Voting" & offR$party.x == "R", 0.5, NA)))))))))
+
+mean_d <- ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Yes" & offD$party.x == "D", 1.5,
+                 ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "No" & offD$party.x == "D", 2,
+                        ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Not Voting" & offD$party.x == "D", 1.75,
+                               ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Yes" & offD$party.x == "D", 0.5,
+                                      ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "No" & offD$party.x == "D", 1.5,
+                                             ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Not Voting" & offD$party.x == "D", 1,
+                                                    ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Yes" & offD$party.x == "D", 1,
+                                                           ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "No" & offD$party.x == "D", 1.75, 
+                                                                  ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Not Voting" & offD$party.x == "D", 1.5, NA)))))))))
+
+mean_id <- ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Yes" & offD$party.x == "ID", 1.5,
+                 ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "No" & offD$party.x == "ID", 2,
+                        ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Not Voting" & offD$party.x == "ID", 1.75,
+                               ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Yes" & offD$party.x == "ID", 0.5,
+                                      ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "No" & offD$party.x == "ID", 1.5,
+                                             ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Not Voting" & offD$party.x == "ID", 1,
+                                                    ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Yes" & offD$party.x == "ID", 1,
+                                                           ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "No" & offD$party.x == "ID", 1.75, 
+                                                                  ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Not Voting" & offD$party.x == "ID", 1.5, NA)))))))))
+
+
+data_vote$mean_r <- mean_r
+data_vote$mean_d <- mean_d
+data_vote$mean_id <- mean_id
+
+data_vote$merged[is.na(data_vote$mean_r)] <- data_vote$mean_d[is.na(data_vote$mean_r)]
+data_vote$merged[is.na(data_vote$merged)] <- data_vote$mean_id[is.na(data_vote$merged)]
+
+mean <- data.frame(summarise_at(group_by(data_vote, name),vars(merged),funs(mean(.,na.rm=TRUE))))
+
+mean$office <-  assumed_office
+mean$party <- as.character(sen_list$party)
+mean$name <- as.character(mean$name)
+
+colnames(mean)[colnames(mean) == "merged"] = "loyalty"
+```
+
+## Loyalty plot
+
+
+```{r, eval=FALSE}
+ggplot(mean, aes(x = office, y = loyalty, color = party, label = name)) +
+  geom_point() +
+  scale_color_manual(values = c("blue", "green", "red")) +
+  scale_y_discrete()
+```
+![Loyalty plot](C:\Users\fcata\OneDrive\Desktop\Capstone_project_FC\fig\Rplot07.png)
+
+## DATA ANALYSIS - SECOND QUESTION
+From the XML files downloaded, I obtain two data frames: 
+
+1.	The first one contains the full list of the sponsors of each introduced bill, which contains the full list of the 3687 sponsors of all the introduced bills
+2.	The second one contains the full list of the cosponsors of each introduced bill, that have almost 59 columns for each cosponsor with a lot of Naif there is less than 59 cosponsors
+
+Using these two data frames the main objective is to create a new table in which I will have three columns: one for the sponsors, one for their cosponsors, and one with the number of relationships they had during all the first session of this Congress. To complete this task, I first need to use **select_if** and **pivot_longer** to create the data frame in which I have each sponsor related to its cosponsor and to the number of bills. Then, I have to use **group_by** and **summarize** to reduce the number of connections and create a new variable that shows the number of connections between sponsor and cosponsor. Observing this data frame I see a lot of missing values and errors, so I need to remove them by using **filter** with **!is.na** while I fix the error in the data using **str_replace** deleting the presence of multiple spaces and the title of each senator (Mr., Ms., and Mrs.). To the obtained data frame I just need to modify the order of the columns, placing the list of cosponsors in the first place using **relocate** because they are the starting point of the following of the network analysis.
+Starting from this data frame I have the possibility to create a network analysis over the connection to research the possible polarization of the US upper chamber of Congress. The following work over the data frame will be useful to the construction of the network analysis. 
+
+```{r, eval=FALSE}
+
+```
+
+## SOCIAL NETWORK ANALYSIS
+
+
+```{r, eval=FALSE}
+
+```
+![Social Network Analysis](C:\Users\fcata\OneDrive\Desktop\Capstone_project_FC\fig\last-attempt.png)
+
+
+```{r}
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
