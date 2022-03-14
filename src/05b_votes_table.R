@@ -14,6 +14,8 @@ for(i in 1:nrow(links1)){
   Sys.sleep(1)
 }
 
+result <- fromJSON("result.json")
+
 votes_list <- list()
 
 i <- 1
@@ -49,6 +51,12 @@ for (i in 1:length(sen_vote)){
 data_vote <- as.data.frame(do.call(rbind, all_vote))
 
 data_vote <- data_vote[-c(1:198), ]
+
+date1 <- rep(c(1:526), each = 100)
+
+data_vote$date <- date1
+
+assumed_office <- c(2013, 2007, 2009, 2019, 2011, 2011, 2013, 2011, 2019, 2007, 2005, 2001, 2015, 2007, 2001, 2007, 2015, 1997, 2010, 2002, 2017, 2015, 2019, 1999, 2013, 2015, 2017, 1997, 2015, 1992, 2013, 2009, 2003, 1981, 2021, 2017, 2019, 2013, 2021, 2013, 2011, 2018, 1994, 2011, 2013, 2020, 2017, 2013, 2007, 2015, 1975, 2011, 2021, 2021, 2010, 2013, 2021, 1985, 2006, 2009, 2011, 2002, 2013, 1993, 2021, 2021, 2011, 2015, 2011, 1997, 2009, 2019, 2019, 2015, 2011, 2007, 2015, 2012, 1999, 2019, 2013, 2009, 1987, 2019, 2018, 2001, 2015, 2007, 2005, 2015, 2011, 2021, 2017, 2009, 2021, 2013, 2007, 2007, 1996, 2017)
 
 #extract questions text
 title_step2 <- list()
@@ -92,4 +100,4 @@ data_title$date <- data_date
 
 data_title <- data_title[-c(1:2), ]
 
-data1 <- rbind(data_title, data_title)
+data1 <- rbind(data_vote, data_title)

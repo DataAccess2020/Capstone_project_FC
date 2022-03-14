@@ -40,7 +40,7 @@ mean_d <- ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Yes" &
 data_vote$mean_r <- mean_r
 data_vote$mean_d <- mean_d
 
-data_vote$merged[is.na(data_vote$mean_r)] <- data_vote$mean_d[is.na(data_vote$mean_r)]
+data_vote$merged[is.na(data_vote$mean_d)] <- data_vote$mean_r[is.na(data_vote$mean_d)]
 
 mean <- data.frame(summarise_at(group_by(data_vote, name),vars(merged),funs(mean(.,na.rm=TRUE))))
 
