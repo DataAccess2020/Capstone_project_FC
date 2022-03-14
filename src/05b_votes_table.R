@@ -14,7 +14,7 @@ for(i in 1:nrow(links1)){
   Sys.sleep(1)
 }
 
-result <- fromJSON("result.json")
+#result <- fromJSON("result.json")
 
 votes_list <- list()
 

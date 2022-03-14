@@ -27,24 +27,40 @@ mean_r <- ifelse(offR$vote_position.y == "Yes" & offR$vote_position.x == "Yes" &
                                                                ifelse(offR$vote_position.y == "Not Voting" & offR$vote_position.x == "No" & offR$party.x == "R", 0.25, 
                                                                       ifelse(offR$vote_position.y == "Not Voting" & offR$vote_position.x == "Not Voting" & offR$party.x == "R", 0.5, NA)))))))))
 
-mean_d <- ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Yes" & offD$party.x == "D" | offD$party.x == "ID", 1.5,
-                 ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "No" & offD$party.x == "D" | offD$party.x == "ID", 2,
-                        ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Not Voting" & offD$party.x == "D" | offD$party.x == "ID", 1.75,
-                               ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Yes" & offD$party.x == "D" | offD$party.x == "ID", 0.5,
-                                      ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "No" & offD$party.x == "D" | offD$party.x == "ID", 1.5,
-                                             ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Not Voting" & offD$party.x == "D" | offD$party.x == "ID", 1,
-                                                    ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Yes" & offD$party.x == "D" | offD$party.x == "I", 1,
-                                                           ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "No" & offD$party.x == "D" | offD$party.x == "ID", 1.75, 
-                                                                  ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Not Voting" & offD$party.x == "D" | offD$party.x == "ID", 1.5, NA)))))))))
+mean_d <- ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Yes" & offD$party.x == "D", 1.5,
+                 ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "No" & offD$party.x == "D", 2,
+                        ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Not Voting" & offD$party.x == "D", 1.75,
+                               ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Yes" & offD$party.x == "D", 0.5,
+                                      ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "No" & offD$party.x == "D", 1.5,
+                                             ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Not Voting" & offD$party.x == "D", 1,
+                                                    ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Yes" & offD$party.x == "D", 1,
+                                                           ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "No" & offD$party.x == "D", 1.75, 
+                                                                  ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Not Voting" & offD$party.x == "D", 1.5, NA)))))))))
+
+mean_id <- ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Yes" & offD$party.x == "ID", 1.5,
+                 ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "No" & offD$party.x == "ID", 2,
+                        ifelse(offD$vote_position.y == "Yes" & offD$vote_position.x == "Not Voting" & offD$party.x == "ID", 1.75,
+                               ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Yes" & offD$party.x == "ID", 0.5,
+                                      ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "No" & offD$party.x == "ID", 1.5,
+                                             ifelse(offD$vote_position.y == "No" & offD$vote_position.x == "Not Voting" & offD$party.x == "ID", 1,
+                                                    ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Yes" & offD$party.x == "ID", 1,
+                                                           ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "No" & offD$party.x == "ID", 1.75, 
+                                                                  ifelse(offD$vote_position.y == "Not Voting" & offD$vote_position.x == "Not Voting" & offD$party.x == "ID", 1.5, NA)))))))))
+
 
 data_vote$mean_r <- mean_r
 data_vote$mean_d <- mean_d
+data_vote$mean_id <- mean_id
 
-data_vote$merged[is.na(data_vote$mean_d)] <- data_vote$mean_r[is.na(data_vote$mean_d)]
+data_vote$merged[is.na(data_vote$mean_r)] <- data_vote$mean_d[is.na(data_vote$mean_r)]
+data_vote$merged[is.na(data_vote$merged)] <- data_vote$mean_id[is.na(data_vote$merged)]
 
 mean <- data.frame(summarise_at(group_by(data_vote, name),vars(merged),funs(mean(.,na.rm=TRUE))))
 
 mean$office <-  assumed_office
 mean$party <- as.character(sen_list$party)
+mean$name <- as.character(mean$name)
 
 colnames(mean)[colnames(mean) == "merged"] = "loyalty"
+
+#write.csv(mean, "mean.csv")

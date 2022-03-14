@@ -1,23 +1,12 @@
 library(tidyverse)
-library(rvest)
-library(httr)
-library(curl)
-library(here)
 library(jsonlite)
 library(RCurl)
-library(RJSONIO)
-library(rromeo)
 library(stringi)
 library(rio)
-library(lubridate)
-library(rvest)
 library(plotly)
-library(gapminder)
 library(htmlwidgets)
-library(XML)
 library(igraph)
 library(xml2)
-library(networkD3)
 
 #URL
 

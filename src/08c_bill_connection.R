@@ -21,25 +21,21 @@ for (z in 1:3687){
 }
 
 spon_data <- as.data.frame(t(stri_list2matrix(spon_list)))
-
 cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)))
-
-setwd("C:/Users/fcata/OneDrive/Desktop/Capstone_project_FC/data/")
 
 number <- (1:3687)
 
 cosp_data$number <- number
 spon_data$number <- number
 
+#write.csv(spon_data, "spon_data.csv")
+#write.csv(cosp_data, "cosp_data.csv")
+
+#spon_data <- import("spon_data.csv")
+#cosp_data <- import("cosp_data.csv")
+
 spon_data <- subset(spon_data, select = -c(V1))
 cosp_data <- subset(cosp_data, select = -c(V1))
-
-write.csv(spon_data, "spon_data.csv")
-write.csv(cosp_data, "cosp_data.csv")
-
-spon_data <- import("spon_data.csv")
-cosp_data <- import("cosp_data.csv")
-
 cosp_data$sponsor <- spon_data$V1
 
 att <- cosp_data %>%
@@ -64,7 +60,7 @@ count[count == "Van [s]Hollen"] <- "Van Hollen"
 count <- count %>%
   relocate(cosponsor)
 
-write.csv(count, "count.csv")
+#write.csv(count, "count.csv")
 
-count <- import("count.csv")
+#count <- import("count.csv")
 count <- subset(count, select = -c(V1))
