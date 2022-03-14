@@ -62,5 +62,5 @@ count <- count %>%
 
 #write.csv(count, "count.csv")
 
-#count <- import("count.csv")
-count <- subset(count, select = -c(V1))
+#count <- import("data/count.csv")
+#count <- subset(count, select = -c(V1))

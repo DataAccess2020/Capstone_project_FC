@@ -60,7 +60,10 @@ mean <- data.frame(summarise_at(group_by(data_vote, name),vars(merged),funs(mean
 mean$office <-  assumed_office
 mean$party <- as.character(sen_list$party)
 mean$name <- as.character(mean$name)
+mean$role <- ifelse(mean$name == "Mitch McConnell", "Leader", ifelse(mean$name == "Charles E. Schumer", "Leader", ifelse(mean$name == "John Thune", "Whip", ifelse(mean$name == "Richard J. Durbin", "Whip", ifelse(mean$name == "John Barrasso", "Conference Chair", ifelse(mean$name == "Patty Murray", "Conference Chair", "Senator"))))))
+mean$role_v <- ifelse(mean$name == "Mitch McConnell", 3, ifelse(mean$name == "Charles E. Schumer", 3, ifelse(mean$name == "John Thune", 2, ifelse(mean$name == "Richard J. Durbin", 2, ifelse(mean$name == "John Barrasso", 1, ifelse(mean$name == "Patty Murray", 1, 0))))))
 
 colnames(mean)[colnames(mean) == "merged"] = "loyalty"
 
-#write.csv(mean, "mean.csv")
+#write.csv(mean, "data/mean.csv")
+#mean <- subset(mean, select = -c(V1))

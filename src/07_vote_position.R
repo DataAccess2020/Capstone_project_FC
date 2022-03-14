@@ -24,8 +24,6 @@ mean$office <- assumed_office
 mean$party <- as.character(sen_list$party)
 
 
-mean$role <- ifelse(mean$name == "Mitch McConnell", "Leader", ifelse(mean$name == "Charles E. Schumer", "Leader", ifelse(mean$name == "John Thune", "Whip", ifelse(mean$name == "Richard J. Durbin", "Whip", ifelse(mean$name == "John Barrasso", "Conference Chair", ifelse(mean$name == "Patty Murray", "Conference Chair", "Senator"))))))
-mean$role_v <- ifelse(mean$name == "Mitch McConnell", 3, ifelse(mean$name == "Charles E. Schumer", 3, ifelse(mean$name == "John Thune", 2, ifelse(mean$name == "Richard J. Durbin", 2, ifelse(mean$name == "John Barrasso", 1, ifelse(mean$name == "Patty Murray", 1, 0))))))
 
 p <- ggplot(mean, aes(x = office, y = value, color = party, label = name)) +
   geom_point(aes(shape = role, size = role_v))

@@ -13,6 +13,11 @@ network <- simpleNetwork(count, height="100px", width="100px",
 
 saveWidget(network, file = "network.html")
 
+#count <- import("data/count.csv")
+#sen_list <- import("data/sen_list.csv")
+#count <- subset(count, select = -c(V1))
+#sen_list <- subset(sen_list, select = -c(V1))
+
 count2 = (merge(x = count, y = sen_list,by.x = "cosponsor", by.y = "last_name", all.x = TRUE, all.y = FALSE))
 count2 <- subset(count2, select = -c(4:12, 14:48))
 count2 = (merge(x = count2, y = sen_list,by.x = "sponsor", by.y = "last_name", all.x = TRUE, all.y = FALSE))
@@ -52,11 +57,6 @@ V(network)$color <- ifelse(V(network)$party == "R", "red",
 V(network)$size <- NA
 V(network)$size <- vert$div
 
-#degree
-degree_score <- degree(network, mode = 'total')
-betw_score <- betweenness(network)
-head(degree_score, 3)
-
 #edges colors
 party_colors <- c(
   'R' = '#CC0000',
@@ -77,10 +77,6 @@ E(network)$color <- party_colors_semitransp[E(network)$fromto]
 #layout
 l <- layout_with_fr(network)
 
-co <- layout.auto(network)
-
-png(filename = here("fig/Network10.png"), width = 3960, height = 2160)
-
 plot(network,
   frame = F,
   layout = l,
@@ -95,5 +91,3 @@ title("US Senate connection in introduced bills",
 legend('bottom', legend = names(party_colors), col = party_colors,
        pch = 15, bty = "n",  pt.cex = 1.25, cex = 1,
        text.col = "black", horiz = TRUE)
-
-dev.off()
