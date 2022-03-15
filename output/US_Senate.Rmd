@@ -5,13 +5,17 @@ author: "Francesco Catalfamo"
 date: '2022-03-21'
 output: html_document
 ---
+<style>
+body {
+text-align: justify}
+</style>
 ## INTRODUCTION
 In this project I will analyze the US Senate through two research questions:
 - In the first question, I research the possible connection between the seniority of the members of the upper chamber of the Congress and their position with respect to their Party Leader. I will use each cast vote and recode these looking at the vote expressed by their Leader, starting from considering the equal political division of the US Senate with just the Vice president casting the tie-breaking vote. For this reason, I want to observe if the seniority could influence how senators cast their vote, considering that they will vote used to vote quite more similar to their leader, while the juniors will vote more differently. 
 - In the second question, I will start from what is now considered as a general opinion about US politics: it is polarized, and the Senate is the place where it is more evident. Starting from this statement, I will use each introduced bill in the first session of the 117^th^ Congress, the one that goes through 2021, and I will observe who are the sponsors and who are their cosponsors. Then I will reorganize the data obtained in a data frame to count the number of connections between them. To show the results of the analysis, I will create a network analysis through what observe the connection between the two parties. 
 
 In my research I will need a these of packages: 
-```{r Package loading, include=FALSE}
+```{r Package loading, warning = FALSE, message = F}
 library(tidyverse)
 library(jsonlite)
 library(RCurl)
@@ -24,7 +28,7 @@ library(xml2)
 library(here)
 ```
 
-## DATA EXTRACTION
+## DATA EXTRACTION - FIRST QUESTION
 To research the data needed for the first question, I will use the API from the website ProPublica that takes its information directly from the pages of the two chambers of Congress. I will use the API to extract two pieces of information:
 
 The complete list of Senators from the 117^th^ Congress,
@@ -86,40 +90,6 @@ data_vote <- as.data.frame(do.call(rbind, all_vote))
 ```
 
 To do these things, I will use a for loop that will extract and add each of the 528 votes held last year to a data frame, just with two elements: my personal API key and the link of the API request (*https://api.propublica.org/congress/v1/117/senate/members.json* and *https://api.propublica.org/congress/v1/117/senate/sessions/1/votes/*) previously modified with all the numbers of roll call votes. I will use the function **getURL** from the package **RCurl**, and then, I will use the function **fromJSON** to work on the obtained file and to put all the elements collected from the API requests into a big list in which I will find and extract all the votes cast. After gaining a large list with all the elements needed, I will use **rbind** and **do.call** to transform all the elements of the list into a data frame.
-
-To request the information of the second research question, due to a technical problem with the API of Pro Publica, I switch sources and downloaded a folder directly from **YouGov** that contains 3687 XML with the text of all the introduced bills. With all these files in a folder on my computer, I just need to scrape the information, and to do the extraction I will use for loop with **read_xml** using the name of the files in the folder, create with **str_c** in the same loop, and then **xml_find_all** to extract the specified nodes that I need. In order to gather the full list of sponsors and cosponsors, I will use these functions two times, one to scrape the first list that contains one element for each bill and one to scrape the second list that has a different length for each bill, depending on the number of senators who have decided to sign the bill. As in the previous question, it will render me two lists with a lot of elements that I will reorganize into two data frames different using **stri_list2matrix** and **as.data.frame** adding them the number of the laws that will be useful in the following step. 
-
-```{r, eval=FALSE}
-spon_list <- list()
-
-i <- 1
-for (i in 1:3687){
-  path <- str_c("1 (", i, ").xml")
-  a <- read_xml(path)
-  cosp <- c(xml_find_all(a, ".//form/action/action-desc/sponsor") %>%
-    xml_text())
-  spon_list[[length(spon_list)+1]] <- cosp
-}
-
-cosp_list <- list()
-
-z <- 1
-for (z in 1:3687){
-  path <- str_c("1 (", z, ").xml")
-  a <- read_xml(path)
-  cosp <- c(xml_find_all(a, ".//form/action/action-desc/cosponsor") %>%
-              xml_text())
-  cosp_list[[length(cosp_list)+1]] <- cosp
-}
-
-spon_data <- as.data.frame(t(stri_list2matrix(spon_list)))
-cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)))
-
-number <- (1:3687)
-
-cosp_data$number <- number
-spon_data$number <- number
-```
 
 ## DATA ANALYSIS - FIRST QUESTION
 Once I obtain the data frame with all the positions I have to define the value of the vote cast by each senator with respect to his or her party Leader. Considering the party division in the Senate, I built a table in which I consider all the possible positions of the senators (vote yeas, note no, and not vote) related to the position of the Party Leader. To create a useful data frame with the values, I have to construct three new data frames, one for the Republicans, one for the Democrats, and one for the Independents, using **filter** with the name of the leader and **merge** with the data frame that contains all the votes cast. In these two I will compare the vote of *Mitch McConnell* and *Chuck Schumer* just by using **ifelse** crossing the value previously defined with the column of the data frame that contains all the votes in order to create a vector with all the values for on hundred senators. These three vectors have to be inserted in the previous data frames as three new columns that I will merge by using **is.na** because one column is composed just of the votes of the Republicans and *NA* if the senator came from the other parties, one by the votes of Democrats, and one for the votes cast by the Independents, while all the missing values are composed by *NA*. A final point, starting from this new column merged, I created a new data frame by using **summarize_at**, **group_by**, and **mean**  and that new one will include:
@@ -219,6 +189,40 @@ p <- ggplot(mean, aes(x = office, y = loyalty, color = party, label = name)) +
 ggplotly(p)
 ```
 
+##DATA EXTRACTION - SECOND QUESTION
+To request the information of the second research question, due to a technical problem with the API of Pro Publica, I switch sources and downloaded a folder directly from **YouGov** that contains 3687 XML with the text of all the introduced bills. With all these files in a folder on my computer, I just need to scrape the information, and to do the extraction I will use for loop with **read_xml** using the name of the files in the folder, create with **str_c** in the same loop, and then **xml_find_all** to extract the specified nodes that I need. In order to gather the full list of sponsors and cosponsors, I will use these functions two times, one to scrape the first list that contains one element for each bill and one to scrape the second list that has a different length for each bill, depending on the number of senators who have decided to sign the bill. As in the previous question, it will render me two lists with a lot of elements that I will reorganize into two data frames different using **stri_list2matrix** and **as.data.frame** adding them the number of the laws that will be useful in the following step. 
+
+```{r, eval=FALSE}
+spon_list <- list()
+
+i <- 1
+for (i in 1:3687){
+  path <- str_c("1 (", i, ").xml")
+  a <- read_xml(path)
+  cosp <- c(xml_find_all(a, ".//form/action/action-desc/sponsor") %>%
+    xml_text())
+  spon_list[[length(spon_list)+1]] <- cosp
+}
+
+cosp_list <- list()
+
+z <- 1
+for (z in 1:3687){
+  path <- str_c("1 (", z, ").xml")
+  a <- read_xml(path)
+  cosp <- c(xml_find_all(a, ".//form/action/action-desc/cosponsor") %>%
+              xml_text())
+  cosp_list[[length(cosp_list)+1]] <- cosp
+}
+
+spon_data <- as.data.frame(t(stri_list2matrix(spon_list)))
+cosp_data <- as.data.frame(t(stri_list2matrix(cosp_list)))
+
+number <- (1:3687)
+
+cosp_data$number <- number
+spon_data$number <- number
+```
 ## DATA ANALYSIS - SECOND QUESTION
 From the XML files downloaded, I obtain two data frames: 
 
@@ -229,14 +233,108 @@ Using these two data frames the main objective is to create a new table in which
 Starting from this data frame I have the possibility to create a network analysis over the connection to research the possible polarization of the US upper chamber of Congress. The following work over the data frame will be useful to the construction of the network analysis. 
 
 ```{r, eval=FALSE}
+cosp_data$sponsor <- spon_data$V1
 
+att <- cosp_data %>%
+  select_if(is.character) %>%
+  pivot_longer(!sponsor, names_to = "name", values_to = "cosponsor")
+
+count <- att %>% 
+  group_by(sponsor, cosponsor)  %>%
+  summarize(n = n())
+
+count <- count %>% 
+  filter(!is.na(cosponsor)&!is.na(sponsor))
+
+count$sponsor <- str_replace(count$sponsor, "M[rs][s]*\\.[\\s]*", "")
+count$cosponsor <- str_replace(count$cosponsor, "M[rs][s]*\\.[\\s]*", "")
+count$sponsor <- str_replace(count$sponsor, "Wyden[\\s]*", "Wyden")
+count$cosponsor <- str_replace(count$cosponsor, "Wyden[\\s]*", "Wyden")
+count$sponsor <- str_replace(count$sponsor, "Ernst[\\s]*", "Ernst")
+count$cosponsor <- str_replace(count$cosponsor, "Ernst[\\s]*", "Ernst")
+count[count == "Van [s]Hollen"] <- "Van Hollen"
+
+count <- count %>%
+  relocate(cosponsor)
 ```
 
 ## SOCIAL NETWORK ANALYSIS
-
+Starting from the data frame named *count* it is possible to create a social network that will show if there is a polarization in the Senate. Firstly, I start using the function **merge** between this data frame and the list of the senators to add the party to each sponsor and cosponsor. Then I have to prepare edges and nodes to be useful to the construction of the network. By using **ifelse** I create a new variable that will permit to use of different colors for the edges. Then, I have to prepare the vertices in a data frame, by adding the name, the size, and the party of each one. Using the function **graph_from_data_frame** I can create the basis of the network starting from the previously created data frame just adding vertices and direction. As a following passage, I define the color of each edges considering the variable *fromto* previously defined within the data frame *count2* and adding to the network using **E(network)$color**. The last thing need is the layout and I decided to use Fruchterman-Reingold which seems to be the better choice for the value that I have. In the end, I put all these elements inside the plot to show the results of my social network analysis adding the title and the legend that consent to better visualization of the network.
 
 ```{r, eval=FALSE}
+count2 = (merge(x = count, y = sen_list,by.x = "cosponsor", by.y = "last_name", all.x = TRUE, all.y = FALSE))
+count2 <- subset(count2, select = -c(4:12, 14:48))
+count2 = (merge(x = count2, y = sen_list,by.x = "sponsor", by.y = "last_name", all.x = TRUE, all.y = FALSE))
+count2 <- subset(count2, select = -c(5:13, 15:489))
+count2$cp <- as.character(count2$party.x)
+count2$sp <- as.character(count2$party.y)
+count2 <- subset(count2, select = -c(4:5))
 
+count2 <- count2 %>%
+  relocate(cosponsor)
+
+count2$fromto <- ifelse(count2$cp == "R" & count2$sp == "R", "R", 
+                        ifelse(count2$cp == "R" & count2$sp == "D", "RD",
+                               ifelse(count2$cp == "R"& count2$sp == "ID", "RID",
+                                      ifelse(count2$cp == "D" & count2$sp == "D", "D",
+                                             ifelse(count2$cp == "D" & count2$sp == "R", "DR",
+                                                    ifelse(count2$cp == "D" & count2$sp == "ID", "DID",
+                                                           ifelse(count2$cp == "ID" & count2$sp == "ID", "ID",
+                                                                  ifelse(count2$cp == "ID" & count2$sp == "R", "IDR", "IDD"))))))))
+
+#vertices
+vert <- data.frame()
+vert <- count %>%
+  group_by(sponsor) %>%
+  summarize(n = n())
+vert$value <- (10)
+vert$div <- vert$n/vert$value
+vert$party <- sen_list$party
+
+#network
+network <- graph_from_data_frame(d = count2, vertices = vert, directed = F)
+
+#vertices color and size
+V(network)$color <- NA
+V(network)$color <- ifelse(V(network)$party == "R", "red",
+                           ifelse(V(network)$party == "D", "blue", "green"))
+V(network)$size <- NA
+V(network)$size <- vert$div
+
+#edges colors
+party_colors <- c(
+  'R' = '#CC0000',
+  'RD' = '#800080',
+  'RID' = '#A52A2A',
+  'D' = '#0000ED',
+  'DR' = '#EEEE00',
+  'DID' = '#004080',
+  'ID' = '#33D633',
+  'IDR' = '#6B8E23',
+  'IDD' = '#ADD8E6'
+)
+party_colors_semitransp <- paste0(party_colors, '40')   
+names(party_colors_semitransp) <- names(party_colors)
+E(network)$color <- NA
+E(network)$color <- party_colors_semitransp[E(network)$fromto]
+
+#layout
+l <- layout_with_fr(network)
+
+plot(network,
+  frame = F,
+  layout = l,
+  vertex.label.cex = 0.7,
+  vertex.color = adjustcolor(V(network)$color, alpha.f = 0.9),
+  vertex.label.color = 'black',
+  edge.arrow.size = .005,
+  edge.width = .3,
+  edge.curved = 0.1)
+title("US Senate connection in introduced bills",
+      cex = 20, line = 1)
+legend('bottom', legend = names(party_colors), col = party_colors,
+       pch = 15, bty = "n",  pt.cex = 1.25, cex = 1,
+       text.col = "black", horiz = TRUE)
 ```
 ![Social Network Analysis](C:\Users\fcata\OneDrive\Desktop\Capstone_project_FC\fig\Rplot.png)
 
@@ -244,5 +342,3 @@ Starting from this data frame I have the possibility to create a network analysi
 ```{r}
 
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
