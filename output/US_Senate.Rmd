@@ -337,8 +337,18 @@ legend('bottom', legend = names(party_colors), col = party_colors,
        text.col = "black", horiz = TRUE)
 ```
 ![Social Network Analysis](C:\Users\fcata\OneDrive\Desktop\Capstone_project_FC\fig\Rplot.png)
+## CONCLUSION
+Through the two questions, I have the possibility to observe loyalty and social connection between senators. As far as loyalty, it is possible to observe a greater distribution between the GOP that could be explained by the political division of the Senate: in fact, the Dems control just half of the Senate, and to pass a large part of their agenda they need the support of almost some senators of the opposition. On the other hand, the smaller distribution of the Dems is needed to pass almost some part of their agenda and it requires all the ability of the leader to keep control of his caucus. 
 
+With regard to the social connection, observing the graph it is possible to see that the well-known polarization cannot be found in the Senate because each senator has done almost one law with the other part. Also, the senators who were described as more progressist and the others described as more conservators had to try to push some piece of legislation together. In the end, it is visible a sort of division on one side the Dems and on the other the GOP, while in the middle there are a lot of centrist Senators that try to work with the two sides. 
 
-```{r}
+For this project, I used a lot of different packages and data extracted from *ProPublica* and *GovInfo* with the objective of the study of the sitting US Senators. I try to find an answer to my two research questions with recoding and graph that permit me to make an important analysis of the Senate. 
 
-```
+### REFERENCES
+Jones. D. R., (2001) Party Polarization and Legislative Gridlock, Political Research Quarterly, University of Utah
+
+Burden B. C., (2011) Polarization, Obstruction, and Governing in the Senate, The Forum, University of Wisconsin - Madison
+
+Carson J. L., (2008) Electoral Accountability, Party Loyalty, and Roll-Call Voting in the U.S. Senate, Chicago Scholarship, Oxford University Press
+
+Treul S. A., (2007) Ambition and Party Loyalty in the US Senate, Midwest Political Science Association, University of Minnesota
