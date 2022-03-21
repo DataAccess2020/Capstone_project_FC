@@ -85,9 +85,9 @@ plot(network,
   vertex.label.color = 'black',
   edge.arrow.size = .005,
   edge.width = .3,
-  edge.curved = 0.1)
-title("US Senate connection in introduced bills",
-      cex = 20, line = 1)
-legend('bottom', legend = names(party_colors), col = party_colors,
+  edge.curved = 0.1) +
+  title("US Senate connection in introduced bills",
+      cex = 20, line = 1) +
+  legend('bottom', legend = names(party_colors), col = party_colors,
        pch = 15, bty = "n",  pt.cex = 1.25, cex = 1,
        text.col = "black", horiz = TRUE)
